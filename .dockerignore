@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+*.log
+README.md
+neuroscribe.service
+install-service.sh
+uninstall-service.sh

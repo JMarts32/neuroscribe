@@ -1,0 +1,17 @@
+services:
+  neuroscribe:
+    build: .
+    image: neuroscribe:latest
+    container_name: neuroscribe
+    restart: unless-stopped
+    # Run as the host user so the mounted model cache stays owned by you.
+    user: "1000:1000"
+    ports:
+      # Bind to localhost only — not exposed to the network.
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # Reuse the already-downloaded large-v3 model (~3 GB), no re-download.
+      - ${HOME}/.cache/huggingface:/cache
+    environment:
+      - OMP_NUM_THREADS=8
+      - HF_HOME=/cache

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEUROSCRIBE // DOCS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    .doc { position: relative; z-index: 10; max-width: 880px; margin: 0 auto; padding: 36px 22px 80px; }
+    .doc h2 { font-family: "Orbitron", sans-serif; color: var(--cyan); letter-spacing: 2px; font-size: 18px; margin: 34px 0 12px; border-left: 3px solid var(--magenta); padding-left: 12px; }
+    .doc p { color: var(--text); line-height: 1.7; font-size: 14px; margin-bottom: 10px; }
+    .doc p.lead { color: var(--dim); }
+    .doc code { color: var(--green); background: rgba(0,0,0,0.4); padding: 1px 6px; border-radius: 3px; }
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+    .tbl th, .tbl td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl th { color: var(--amber); letter-spacing: 1px; font-weight: normal; }
+    .tbl td.name { color: var(--cyan); white-space: nowrap; }
+    .tbl tr.default td { background: rgba(0,240,255,0.05); }
+    .badge { color: #042016; background: var(--green); font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-left: 6px; }
+    .back { display: inline-block; margin-bottom: 8px; color: var(--magenta); text-decoration: none; border: 1px solid var(--magenta); padding: 5px 12px; border-radius: 3px; letter-spacing: 1px; }
+    .back:hover { background: var(--magenta); color: #1a0418; }
+    ul { color: var(--text); line-height: 1.7; font-size: 14px; margin: 4px 0 10px 22px; }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="grid-bg"></div>
+
+  <main class="doc">
+    <a class="back" href="/">◂ BACK TO APP</a>
+    <h1 class="glitch" data-text="DOCUMENTATION" style="font-family:'Orbitron';font-weight:900;letter-spacing:4px;color:#fff;font-size:30px;text-shadow:0 0 10px var(--cyan);margin:10px 0 6px;">DOCUMENTATION</h1>
+    <p class="lead">How NEUROSCRIBE transcribes, and what every option does. Defaults are tuned for this machine (AMD Ryzen 7 PRO 8840U, CPU).</p>
+
+    <h2>How it works</h2>
+    <p>Your file is decoded to 16&nbsp;kHz mono audio, split into ~30&nbsp;second windows, and fed to a <strong>Whisper</strong> speech-recognition model running through <strong>faster-whisper</strong> (the CTranslate2 engine). The model predicts text token by token; we collect the segments and print one <code>[mm:ss] text</code> line each. Everything runs locally on your CPU — nothing is uploaded.</p>
+
+    <h2>Models</h2>
+    <p class="lead">Bigger = more accurate but slower and more RAM. <code>relative speed</code> is rough, vs <code>large-v3</code>.</p>
+    <table class="tbl" id="model-table">
+      <thead><tr><th>Model</th><th>Params</th><th>RAM</th><th>Rel. speed</th><th>Notes</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Compute type</h2>
+    <p class="lead">How the model's numbers are stored/computed. Affects speed, RAM and a little accuracy.</p>
+    <table class="tbl" id="compute-table">
+      <thead><tr><th>Type</th><th>What it does</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Language</h2>
+    <p><code>Auto-detect</code> lets the model guess the spoken language from the first few seconds. Forcing a language is faster and avoids mis-detection on short or noisy clips. Whisper is multilingual; this app exposes a common subset.</p>
+
+    <h2>Beam size</h2>
+    <p>Beam search keeps the N most-likely transcription paths and picks the best. <code>1</code> is greedy decoding (fastest); <code>5</code> (default) explores more and is usually more accurate at a modest speed cost. Above ~5 gains are tiny.</p>
+
+    <h2>VAD filter</h2>
+    <p>Voice Activity Detection trims silent/non-speech stretches before transcription. Keeping it <code>on</code> (default) is faster and prevents the model from "hallucinating" text during long silences.</p>
+
+    <h2>Recommended defaults for this PC</h2>
+    <ul>
+      <li><strong>Model</strong> <code>large-v3</code> — best accuracy; this CPU handles it.</li>
+      <li><strong>Compute</strong> <code>int8</code> — uses the 8840U's AVX512-VNNI, fastest on CPU.</li>
+      <li><strong>Language</strong> <code>English</code>, <strong>Beam</strong> <code>5</code>, <strong>VAD</strong> <code>on</code>.</li>
+      <li>Need a quick draft? Try <code>distil-large-v3</code> or <code>medium</code> — much faster, still good.</li>
+    </ul>
+  </main>
+
+  <script>
+    (async () => {
+      const o = await (await fetch("/api/options")).json();
+      const d = o.defaults;
+      const mt = document.querySelector("#model-table tbody");
+      for (const [name, m] of Object.entries(o.models)) {
+        const def = name === d.model_size;
+        mt.insertAdjacentHTML("beforeend",
+          `<tr class="${def ? "default" : ""}"><td class="name">${name}${def ? '<span class="badge">DEFAULT</span>' : ""}</td><td>${m.params}</td><td>${m.ram}</td><td>${m.rel_speed}</td><td>${m.blurb}</td></tr>`);
+      }
+      const ct = document.querySelector("#compute-table tbody");
+      for (const [name, desc] of Object.entries(o.compute_types)) {
+        const def = name === d.compute_type;
+        ct.insertAdjacentHTML("beforeend",
+          `<tr class="${def ? "default" : ""}"><td class="name">${name}${def ? '<span class="badge">DEFAULT</span>' : ""}</td><td>${desc}</td></tr>`);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs / temp
+*.log
+*.tmp
+
+# OS
+.DS_Store
+
+# Models are downloaded at runtime into ~/.cache/huggingface (not in repo)

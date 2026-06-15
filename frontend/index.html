@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEUROSCRIBE // faster-whisper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="grid-bg"></div>
+
+  <main class="terminal">
+    <header class="head">
+      <div class="brand">
+        <span class="logo-mark">▚</span>
+        <h1 class="glitch" data-text="NEUROSCRIBE">NEUROSCRIBE</h1>
+      </div>
+      <div class="sysline">
+        <span class="dot"></span>
+        <span id="sysmsg">SYS://cpu·8t · ryzen-8840u</span>
+        <a class="navlink" href="/docs" target="_blank">◰ DOCS</a>
+      </div>
+    </header>
+
+    <section id="drop" class="dropzone">
+      <input type="file" id="fileinput" accept="audio/*,video/*,.mp4,.m4a,.mp3,.wav,.webm" hidden />
+      <div class="drop-inner">
+        <div class="drop-icon">⊹</div>
+        <p class="drop-title">DROP AUDIO / VIDEO FILE</p>
+        <p class="drop-sub">mp4 · m4a · mp3 · wav · webm — or <span class="link">click to browse</span></p>
+        <p id="filename" class="filename"></p>
+      </div>
+    </section>
+
+    <section class="options">
+      <div class="opt-head">
+        <span class="opt-title">// CONFIG</span>
+        <button id="resetbtn" type="button" class="reset-btn" title="Restore the tuning that works best on this PC">↺ DEFAULTS (this PC)</button>
+      </div>
+      <div class="opt-grid">
+        <label class="opt">
+          <span class="opt-label">MODEL</span>
+          <select id="opt-model"></select>
+          <span class="opt-hint" id="hint-model"></span>
+        </label>
+        <label class="opt">
+          <span class="opt-label">COMPUTE</span>
+          <select id="opt-compute"></select>
+          <span class="opt-hint" id="hint-compute"></span>
+        </label>
+        <label class="opt">
+          <span class="opt-label">LANGUAGE</span>
+          <select id="opt-language"></select>
+          <span class="opt-hint">Force a language or auto-detect.</span>
+        </label>
+        <label class="opt">
+          <span class="opt-label">BEAM SIZE</span>
+          <input id="opt-beam" type="number" min="1" max="10" step="1" />
+          <span class="opt-hint">1 = fast/greedy · 5 = more accurate.</span>
+        </label>
+        <label class="opt opt-toggle">
+          <span class="opt-label">VAD FILTER</span>
+          <span class="switch"><input id="opt-vad" type="checkbox" /><span class="slider"></span></span>
+          <span class="opt-hint">Skip silence: faster &amp; cleaner.</span>
+        </label>
+      </div>
+    </section>
+
+    <button id="runbtn" class="run-btn" disabled>
+      <span class="run-label">▶ EXECUTE TRANSCRIPTION</span>
+    </button>
+
+    <section id="statusbox" class="statusbox hidden">
+      <div class="status-row">
+        <span id="statustext">INITIALIZING…</span>
+        <span id="statuspct">0%</span>
+      </div>
+      <div class="bar"><div id="barfill" class="barfill"></div></div>
+      <p class="hint" id="hint">First run downloads the model (~3 GB) once, then it's cached.</p>
+    </section>
+
+    <section id="resultbox" class="resultbox hidden">
+      <div class="result-head">
+        <span class="result-title">// OUTPUT BLOCK</span>
+        <div class="result-meta" id="resultmeta"></div>
+        <button id="copybtn" class="copy-btn">⧉ COPY</button>
+      </div>
+      <textarea id="output" class="output" readonly spellcheck="false"></textarea>
+    </section>
+
+    <footer class="foot">
+      <span id="footmsg">READY</span>
+    </footer>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

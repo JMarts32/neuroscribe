@@ -1,0 +1,18 @@
+[Unit]
+Description=NEUROSCRIBE faster-whisper transcription service (Docker Compose)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# __WORKDIR__ is replaced with the repo path by install-service.sh.
+WorkingDirectory=__WORKDIR__
+# Wait for the Docker daemon to be ready (it's a system service started at boot).
+ExecStartPre=/bin/sh -c 'until /usr/bin/docker info >/dev/null 2>&1; do sleep 2; done'
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target
