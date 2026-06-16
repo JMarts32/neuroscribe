@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a1326"/>
+      <stop offset="1" stop-color="#05070d"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="1.8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- tile -->
+  <rect x="2" y="2" width="60" height="60" rx="13" fill="url(#bg)"
+        stroke="#00f0ff" stroke-opacity="0.55" stroke-width="1.5"/>
+
+  <!-- faint scanlines -->
+  <g stroke="#00f0ff" stroke-opacity="0.10" stroke-width="1">
+    <line x1="6" y1="20" x2="58" y2="20"/>
+    <line x1="6" y1="32" x2="58" y2="32"/>
+    <line x1="6" y1="44" x2="58" y2="44"/>
+  </g>
+
+  <!-- N monogram: magenta offset behind, cyan on top (glitch feel) -->
+  <g filter="url(#glow)" fill="none" stroke-linecap="square">
+    <path d="M19 46 V18 L45 46 V18" stroke="#ff2cdf" stroke-opacity="0.75"
+          stroke-width="5" transform="translate(1.5,1.5)"/>
+    <path d="M19 46 V18 L45 46 V18" stroke="#00f0ff" stroke-width="5"/>
+  </g>
+</svg>
